@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logistics Syndicate | Вход в систему</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Supabase JS Library (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            dark: '#0f172a', light: '#1e293b', accent: '#3b82f6', 
+                            diamond: '#06b6d4', money: '#10b981'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            background-image: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%);
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .text-glow { text-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+        .tab-active { border-bottom: 2px solid #3b82f6; color: #fff; }
+        .tab-inactive { color: #64748b; }
+        .tab-inactive:hover { color: #cbd5e1; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- Декоративный фон -->
+    <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-cyan-600/20 rounded-full blur-[120px]"></div>
+    </div>
+
+    <!-- Логотип -->
+    <div class="z-10 flex items-center gap-3 mb-8 cursor-pointer" onclick="window.location.href='index.html'">
+        <i class="fa-solid fa-truck-fast text-brand-accent text-4xl"></i>
+        <span class="font-extrabold text-3xl tracking-tight">Logistics<span class="text-brand-accent">Syndicate</span></span>
+    </div>
+
+    <!-- Форма Авторизации/Регистрации -->
+    <div class="glass-panel w-full max-w-md rounded-2xl overflow-hidden z-10 relative">
+        
+        <!-- Загрузочный экран (Loader) -->
+        <div id="loader" class="absolute inset-0 bg-brand-dark/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center hidden">
+            <i class="fa-solid fa-circle-notch fa-spin text-4xl text-brand-accent mb-4"></i>
+            <p class="text-white font-medium animate-pulse">Связь с сервером...</p>
+        </div>
+
+        <!-- Табы переключения -->
+        <div class="flex border-b border-white/10">
+            <button onclick="switchTab('login')" id="tab-login" class="flex-1 py-4 text-center font-bold tab-active transition">
+                Вход
+            </button>
+            <button onclick="switchTab('register')" id="tab-register" class="flex-1 py-4 text-center font-bold tab-inactive transition">
+                Регистрация
+            </button>
+        </div>
+
+        <div class="p-8">
+            <!-- Блок вывода ошибок -->
+            <div id="error-message" class="hidden mb-6 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span id="error-text">Ошибка авторизации</span>
+            </div>
+
+            <!-- Форма ВХОДА -->
+            <form id="form-login" onsubmit="handleLogin(event)" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-1">Email (Почта)</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-envelope text-gray-500"></i>
+                        </div>
+                        <input type="email" id="login-email" required class="w-full bg-black/50 border border-white/10 text-white rounded-lg pl-10 pr-3 py-3 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition">
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <label class="block text-sm font-medium text-gray-400">Пароль</label>
+                        <a href="#" class="text-sm text-brand-accent hover:text-blue-400 transition">Забыли пароль?</a>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-lock text-gray-500"></i>
+                        </div>
+                        <input type="password" id="login-password" required class="w-full bg-black/50 border border-white/10 text-white rounded-lg pl-10 pr-3 py-3 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition">
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-brand-accent hover:bg-blue-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-500/30 transition transform hover:-translate-y-0.5 mt-2">
+                    Войти в игру
+                </button>
+            </form>
+
+            <!-- Форма РЕГИСТРАЦИИ -->
+            <form id="form-register" onsubmit="handleRegister(event)" class="space-y-5 hidden">
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-1">Email (Почта)</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-envelope text-gray-500"></i>
+                        </div>
+                        <input type="email" id="reg-email" required class="w-full bg-black/50 border border-white/10 text-white rounded-lg pl-10 pr-3 py-3 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-1">Пароль (минимум 6 символов)</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-lock text-gray-500"></i>
+                        </div>
+                        <input type="password" id="reg-password" minlength="6" required class="w-full bg-black/50 border border-white/10 text-white rounded-lg pl-10 pr-3 py-3 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition">
+                    </div>
+                </div>
+                <div class="text-xs text-gray-500 pt-2">
+                    Нажимая кнопку, вы соглашаетесь с <a href="#" class="text-brand-accent">Правилами игры</a> и <a href="#" class="text-brand-accent">Политикой конфиденциальности</a>.
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-brand-accent to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-500/30 transition transform hover:-translate-y-0.5 mt-2">
+                    Создать аккаунт
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Интеграция с Supabase -->
+    <script>
+        // ==========================================
+        // КЛЮЧИ SUPABASE
+        // ==========================================
+        const SUPABASE_URL = 'https://xjjnkyhdmqwnkhhljuxp.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhqam5reWhkbXF3bmtoaGxqdXhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyMTM1OTYsImV4cCI6MjA4OTc4OTU5Nn0.OgsDkQId5hcPBM3bqFOm-u9Vj0mU0RkGar8GooKRmUc';
+        
+        // Инициализация клиента. Имя переменной изменено на supabaseClient, 
+        // так как глобальное имя 'supabase' уже занято CDN-скриптом.
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // UI Логика: Переключение табов
+        function switchTab(tab) {
+            const formLogin = document.getElementById('form-login');
+            const formRegister = document.getElementById('form-register');
+            const tabLogin = document.getElementById('tab-login');
+            const tabRegister = document.getElementById('tab-register');
+            const errorBox = document.getElementById('error-message');
+
+            errorBox.classList.add('hidden'); // прячем ошибки при переключении
+
+            if (tab === 'login') {
+                formLogin.classList.remove('hidden');
+                formRegister.classList.add('hidden');
+                tabLogin.className = 'flex-1 py-4 text-center font-bold tab-active transition';
+                tabRegister.className = 'flex-1 py-4 text-center font-bold tab-inactive transition';
+            } else {
+                formLogin.classList.add('hidden');
+                formRegister.classList.remove('hidden');
+                tabRegister.className = 'flex-1 py-4 text-center font-bold tab-active transition';
+                tabLogin.className = 'flex-1 py-4 text-center font-bold tab-inactive transition';
+            }
+        }
+
+        // Вспомогательные функции UI
+        function showLoader(show) {
+            document.getElementById('loader').classList.toggle('hidden', !show);
+        }
+
+        function showError(message) {
+            const errorBox = document.getElementById('error-message');
+            document.getElementById('error-text').innerText = message;
+            errorBox.classList.remove('hidden');
+        }
+
+        // ==========================================
+        // ЛОГИКА АВТОРИЗАЦИИ И РЕГИСТРАЦИИ
+        // ==========================================
+
+        // Регистрация нового игрока
+        async function handleRegister(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+
+            showLoader(true);
+            document.getElementById('error-message').classList.add('hidden');
+
+            try {
+                // Вызов API Supabase: Регистрация
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email: email,
+                    password: password,
+                });
+
+                if (error) throw error;
+
+                // Успешная регистрация (триггер в БД создаст профиль)
+                alert('Регистрация успешна! Теперь вы можете войти.');
+                switchTab('login');
+                
+            } catch (error) {
+                console.error('Ошибка регистрации:', error.message);
+                showError(error.message === 'User already registered' ? 'Этот Email уже зарегистрирован.' : error.message);
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        // Вход в систему
+        async function handleLogin(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            showLoader(true);
+            document.getElementById('error-message').classList.add('hidden');
+
+            try {
+                // Вызов API Supabase: Авторизация
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password,
+                });
+
+                if (error) throw error;
+
+                // Успешный вход! Сохраняем сессию и редиректим в Гараж
+                console.log('Вход выполнен:', data.user);
+                window.location.href = 'dashboard.html';
+
+            } catch (error) {
+                console.error('Ошибка входа:', error.message);
+                showError('Неверный Email или пароль.');
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        // Проверка: Если игрок уже авторизован, сразу кидаем в гараж
+        window.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                window.location.href = 'dashboard.html';
+            }
+        });
+    </script>
+</body>
+</html>
