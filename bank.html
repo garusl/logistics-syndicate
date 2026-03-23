@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logistics Syndicate | Центральный Банк</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            light: '#1e293b',
+                            accent: '#3b82f6', 
+                            diamond: '#06b6d4', 
+                            money: '#10b981',
+                            warning: '#f59e0b',
+                            danger: '#ef4444'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glass-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+        .text-glow {
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+        }
+        /* Кастомный скроллбар */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
+    </style>
+</head>
+<body class="antialiased flex h-screen overflow-hidden">
+
+    <!-- Боковая панель навигации (Sidebar) -->
+    <aside class="w-64 glass-panel hidden md:flex flex-col border-r border-white/10 z-20">
+        <!-- Логотип -->
+        <div class="h-20 flex items-center px-6 border-b border-white/10">
+            <i class="fa-solid fa-truck-fast text-brand-accent text-2xl mr-3"></i>
+            <span class="font-bold text-lg tracking-tight">Logistics<span class="text-brand-accent">Syndicate</span></span>
+        </div>
+
+        <!-- Меню -->
+        <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-2">
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition">
+                <i class="fa-solid fa-warehouse w-5"></i> Гараж
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition">
+                <i class="fa-solid fa-map-location-dot w-5"></i> Биржа грузов
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition">
+                <i class="fa-solid fa-building w-5"></i> Мой бизнес
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition">
+                <i class="fa-solid fa-users w-5"></i> Транспортная компания
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition">
+                <i class="fa-solid fa-handshake w-5"></i> Партнерская программа
+            </a>
+            <div class="pt-4 mt-4 border-t border-white/10"></div>
+            <!-- Активный пункт -->
+            <a href="#" class="flex items-center gap-3 px-4 py-3 bg-brand-money/10 text-brand-money rounded-xl font-semibold border border-brand-money/20 transition shadow-[inset_2px_0_0_#10b981]">
+                <i class="fa-solid fa-building-columns w-5"></i> Банк (Обмен)
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition">
+                <i class="fa-solid fa-chart-line w-5"></i> Рейтинги
+            </a>
+        </nav>
+
+        <!-- Профиль VIP-игрока -->
+        <div class="p-4 border-t border-white/10">
+            <div class="flex items-center gap-3 px-2">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-accent to-brand-diamond flex items-center justify-center border-2 border-white/20 overflow-hidden shadow-lg shadow-cyan-500/30">
+                    <i class="fa-solid fa-user-tie text-white"></i>
+                </div>
+                <div>
+                    <div class="text-sm font-bold text-white flex items-center gap-1">Игрок_7721 <i class="fa-solid fa-circle-check text-brand-diamond text-xs"></i></div>
+                    <div class="text-xs text-brand-diamond font-medium">VIP Рантье</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Основной контент -->
+    <main class="flex-1 flex flex-col h-full relative overflow-y-auto">
+        <!-- Декоративный фон -->
+        <div class="absolute inset-0 z-0 opacity-10 pointer-events-none" style="background: radial-gradient(circle at 50% 50%, #10b981 0%, transparent 50%);"></div>
+
+        <!-- Верхняя панель (Header) -->
+        <header class="h-20 glass-panel border-b border-white/10 flex items-center justify-between px-4 sm:px-8 z-10 sticky top-0">
+            <button class="md:hidden text-gray-400 hover:text-white text-2xl">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <!-- Шкала бодрости -->
+            <div class="hidden sm:flex items-center gap-3 bg-brand-light/50 px-4 py-2 rounded-lg border border-white/5">
+                <i class="fa-solid fa-bolt text-brand-warning"></i>
+                <div class="w-32 h-2 bg-gray-700 rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-yellow-500 to-brand-warning w-[100%]"></div>
+                </div>
+                <span class="text-sm font-bold text-white">100/100</span>
+            </div>
+
+            <!-- Балансы валют -->
+            <div class="flex items-center gap-2 sm:gap-4">
+                <div class="flex items-center gap-2 bg-green-900/30 border border-green-500/30 px-3 py-1.5 rounded-lg cursor-pointer hover:bg-green-900/50 transition">
+                    <i class="fa-solid fa-money-bill-wave text-brand-money"></i>
+                    <span class="font-bold text-brand-money">425 800</span>
+                </div>
+                <div class="hidden sm:flex items-center gap-2 bg-cyan-900/30 border border-cyan-500/30 px-3 py-1.5 rounded-lg">
+                    <i class="fa-solid fa-gem text-brand-diamond opacity-70 text-sm"></i>
+                    <span class="font-bold text-cyan-200 text-sm">840 <span class="text-gray-500 text-xs">/1000</span></span>
+                </div>
+                <div class="flex items-center gap-2 bg-cyan-900/40 border border-brand-diamond px-3 py-1.5 rounded-lg cursor-pointer hover:bg-cyan-900/60 transition shadow-[0_0_10px_rgba(6,182,212,0.3)]">
+                    <i class="fa-solid fa-gem text-brand-diamond text-glow"></i>
+                    <span class="font-bold text-white">12.50</span>
+                    <button class="ml-1 text-gray-400 hover:text-white"><i class="fa-solid fa-plus-circle"></i></button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Контент Банка -->
+        <div class="p-4 sm:p-8 z-10 max-w-6xl mx-auto w-full">
+            
+            <div class="mb-8">
+                <h1 class="text-3xl font-extrabold text-white tracking-tight mb-2">Центральный Банк</h1>
+                <p class="text-gray-400 max-w-2xl">Обмен игровых Баксов на Бриллианты для вывода, сборка Осколков и управление реальными финансами.</p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8 mb-8">
+                
+                <!-- Биржа обмена Баксов (Плавающий курс) -->
+                <div class="glass-card rounded-2xl p-6 md:p-8 border border-brand-money/30 relative">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-right-left text-brand-money"></i> Обмен валюты
+                        </h2>
+                        <!-- Индикатор курса -->
+                        <div class="bg-black/40 px-3 py-1.5 rounded-lg border border-white/5 flex flex-col items-end">
+                            <div class="text-xs text-gray-500">Текущий курс:</div>
+                            <div class="text-sm font-bold text-white flex items-center gap-2">
+                                105 000 $ = 1 <i class="fa-solid fa-gem text-brand-diamond text-xs text-glow"></i>
+                                <span class="text-red-400 text-xs flex items-center"><i class="fa-solid fa-arrow-down mr-1"></i> -5%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-black/30 p-5 rounded-xl border border-white/5 mb-6 relative">
+                        <!-- Направление обмена -->
+                        <div class="flex justify-between mb-2 text-sm text-gray-400">
+                            <span>Отдаете (Баксы)</span>
+                            <span>Доступно: 425 800</span>
+                        </div>
+                        <div class="relative mb-6">
+                            <input type="number" value="210000" class="w-full bg-black/50 border border-green-500/30 text-brand-money text-xl font-bold rounded-lg p-4 outline-none focus:border-brand-money">
+                            <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs bg-white/10 hover:bg-white/20 text-gray-300 px-3 py-1.5 rounded transition">МАКС</button>
+                        </div>
+
+                        <!-- Иконка по центру -->
+                        <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-gray-800 rounded-full border-4 border-[#0f172a] flex items-center justify-center z-10">
+                            <i class="fa-solid fa-arrow-down text-gray-400"></i>
+                        </div>
+
+                        <div class="flex justify-between mb-2 text-sm text-gray-400 mt-6">
+                            <span>Получаете (Бриллианты)</span>
+                        </div>
+                        <div class="relative">
+                            <input type="text" value="2.00" readonly class="w-full bg-cyan-900/20 border border-brand-diamond/30 text-white text-xl font-bold rounded-lg p-4 outline-none text-glow">
+                            <i class="fa-solid fa-gem text-brand-diamond absolute right-4 top-1/2 transform -translate-y-1/2"></i>
+                        </div>
+                    </div>
+
+                    <div class="text-xs text-gray-500 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-info text-blue-400"></i> Комиссия за обмен включена в курс. Курс обновляется каждые 24 часа в зависимости от эмиссии валюты на сервере.
+                    </div>
+
+                    <button class="w-full bg-brand-money hover:bg-green-600 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-green-500/20 transition transform hover:-translate-y-0.5">
+                        Обменять
+                    </button>
+                </div>
+
+                <!-- Сборка Осколков и Касса -->
+                <div class="space-y-8">
+                    
+                    <!-- Сборка Бриллиантов из Осколков -->
+                    <div class="glass-card rounded-2xl p-6 border border-brand-diamond/30 relative overflow-hidden">
+                        <div class="absolute -right-10 -top-10 opacity-5">
+                            <i class="fa-solid fa-gem text-[150px] text-brand-diamond"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-white mb-2 flex items-center gap-2 relative z-10">
+                            <i class="fa-solid fa-hammer text-cyan-400"></i> Синтез Бриллианта
+                        </h2>
+                        <p class="text-sm text-gray-400 mb-5 relative z-10">Соберите 1000 Осколков, найденных в рейсах, чтобы получить целый Бриллиант.</p>
+                        
+                        <div class="bg-black/40 p-4 rounded-xl border border-white/5 relative z-10">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-gray-300 font-medium">Ваш прогресс</span>
+                                <span class="font-bold text-brand-diamond text-glow">840 / 1000</span>
+                            </div>
+                            <div class="w-full h-3 bg-gray-700 rounded-full overflow-hidden mb-4 border border-gray-600">
+                                <div class="h-full bg-gradient-to-r from-cyan-600 to-brand-diamond w-[84%] relative">
+                                    <div class="absolute inset-0 bg-white/20 animate-pulse"></div>
+                                </div>
+                            </div>
+                            <button class="w-full bg-gray-600 text-gray-400 py-2.5 rounded-lg font-bold cursor-not-allowed border border-gray-500/50">
+                                Недостаточно Осколков
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Финансовые операции (Ввод/Вывод) -->
+                    <div class="glass-card rounded-2xl p-6 border border-white/10">
+                        <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-wallet text-gray-400"></i> Финансы
+                        </h2>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <button class="bg-brand-accent/20 hover:bg-brand-accent/40 border border-brand-accent/50 text-white rounded-xl p-4 transition flex flex-col items-center justify-center gap-2 group">
+                                <div class="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center text-blue-400 group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-arrow-down text-xl"></i>
+                                </div>
+                                <span class="font-bold">Пополнить</span>
+                                <span class="text-xs text-gray-400 text-center">Купить Бриллианты</span>
+                            </button>
+
+                            <button class="bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-xl p-4 transition flex flex-col items-center justify-center gap-2 group">
+                                <div class="w-12 h-12 bg-gray-600/30 rounded-full flex items-center justify-center text-gray-300 group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-arrow-up text-xl"></i>
+                                </div>
+                                <span class="font-bold">Вывести</span>
+                                <span class="text-xs text-gray-400 text-center">Продать Бриллианты</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- История транзакций (Пополнения/Выплаты) -->
+            <div class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+                <div class="p-5 border-b border-white/10 bg-white/5">
+                    <h3 class="text-lg font-bold text-white">История операций</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-gray-400">
+                        <thead class="text-xs uppercase bg-black/40 text-gray-500">
+                            <tr>
+                                <th scope="col" class="px-6 py-4">ID Операции</th>
+                                <th scope="col" class="px-6 py-4">Дата и Время</th>
+                                <th scope="col" class="px-6 py-4">Тип</th>
+                                <th scope="col" class="px-6 py-4">Система</th>
+                                <th scope="col" class="px-6 py-4 text-right">Сумма</th>
+                                <th scope="col" class="px-6 py-4 text-center">Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            <tr class="hover:bg-white/5 transition">
+                                <td class="px-6 py-4 font-mono text-xs text-gray-500">#TRX-88219</td>
+                                <td class="px-6 py-4">Сегодня, 14:30</td>
+                                <td class="px-6 py-4">
+                                    <span class="text-brand-money"><i class="fa-solid fa-arrow-down mr-1"></i> Пополнение</span>
+                                </td>
+                                <td class="px-6 py-4 flex items-center gap-2">
+                                    <i class="fa-brands fa-bitcoin text-yellow-500"></i> Crypto (USDT TRC20)
+                                </td>
+                                <td class="px-6 py-4 text-right font-bold text-white">
+                                    + 50.00 <i class="fa-solid fa-gem text-brand-diamond text-[10px] text-glow"></i>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded border border-green-500/30">Успешно</span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-white/5 transition">
+                                <td class="px-6 py-4 font-mono text-xs text-gray-500">#TRX-81004</td>
+                                <td class="px-6 py-4">12.03.2026, 09:15</td>
+                                <td class="px-6 py-4">
+                                    <span class="text-brand-accent"><i class="fa-solid fa-right-left mr-1"></i> Обмен валюты</span>
+                                </td>
+                                <td class="px-6 py-4 flex items-center gap-2">
+                                    <i class="fa-solid fa-building-columns text-gray-400"></i> Внутренний Банк
+                                </td>
+                                <td class="px-6 py-4 text-right font-bold text-white">
+                                    + 1.00 <i class="fa-solid fa-gem text-brand-diamond text-[10px] text-glow"></i>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded border border-green-500/30">Успешно</span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-white/5 transition">
+                                <td class="px-6 py-4 font-mono text-xs text-gray-500">#TRX-75992</td>
+                                <td class="px-6 py-4">01.03.2026, 18:40</td>
+                                <td class="px-6 py-4">
+                                    <span class="text-gray-400"><i class="fa-solid fa-arrow-up mr-1"></i> Вывод средств</span>
+                                </td>
+                                <td class="px-6 py-4 flex items-center gap-2">
+                                    <i class="fa-brands fa-cc-visa text-blue-400"></i> Bank Card (RU)
+                                </td>
+                                <td class="px-6 py-4 text-right font-bold text-white">
+                                    - 25.00 <i class="fa-solid fa-gem text-brand-diamond text-[10px] text-glow"></i>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded border border-green-500/30">Исполнено</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+</body>
+</html>

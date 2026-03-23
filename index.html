@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logistics Syndicate | Экономическая игра</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            light: '#1e293b',
+                            accent: '#3b82f6', // Синий неон
+                            diamond: '#06b6d4', // Цвет бриллиантов
+                            money: '#10b981' // Цвет баксов
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .hero-bg {
+            background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.95)), url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .text-glow {
+            text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+    </style>
+</head>
+<body class="antialiased flex flex-col min-h-screen">
+
+    <!-- Навигация -->
+    <nav class="fixed w-full z-50 glass-panel border-b-0 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-truck-fast text-brand-accent text-3xl"></i>
+                    <span class="font-bold text-2xl tracking-tight">Logistics<span class="text-brand-accent">Syndicate</span></span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-gray-300 hover:text-white transition">О проекте</a>
+                    <a href="#economy" class="text-gray-300 hover:text-white transition">Экономика</a>
+                    <a href="#stats" class="text-gray-300 hover:text-white transition">Статистика</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="text-gray-300 hover:text-white font-medium transition px-4 py-2 hidden sm:block">Войти</button>
+                    <button class="bg-brand-accent hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold shadow-lg shadow-blue-500/30 transition-all transform hover:scale-105">Регистрация</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Главный экран (Hero) -->
+    <header class="hero-bg pt-32 pb-20 lg:pt-48 lg:pb-32 flex-grow flex items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="inline-block mb-4 px-4 py-1 rounded-full border border-brand-accent/30 bg-brand-accent/10 text-brand-accent text-sm font-semibold tracking-wide">
+                11 ЛЕТ СТАБИЛЬНОЙ РАБОТЫ В ИНДУСТРИИ
+            </div>
+            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6">
+                Построй свою <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 text-glow">Империю</span>
+            </h1>
+            <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-300 mb-10">
+                Экономический симулятор дальнобойщика. Начни с бесплатной аренды, покупай элитные тягачи, владей СТО и заправками. Выводи заработанные средства в реал.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button class="bg-gradient-to-r from-brand-accent to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white text-lg px-8 py-4 rounded-xl font-bold shadow-lg shadow-blue-500/30 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-play"></i> Начать играть бесплатно
+                </button>
+                <button class="glass-panel hover:bg-white/10 text-white text-lg px-8 py-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-chart-line"></i> Изучить бизнес-план
+                </button>
+            </div>
+            
+            <div class="mt-12 text-sm text-gray-400 flex items-center justify-center gap-6">
+                <div class="flex items-center gap-2"><i class="fa-solid fa-shield-halved text-brand-accent"></i> Защита от ботов</div>
+                <div class="flex items-center gap-2"><i class="fa-solid fa-wallet text-brand-accent"></i> Быстрые выплаты</div>
+                <div class="flex items-center gap-2 hidden sm:flex"><i class="fa-solid fa-headset text-brand-accent"></i> Поддержка 24/7</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Блок статистики -->
+    <section id="stats" class="py-12 border-y border-white/10 bg-brand-dark relative z-10 -mt-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div class="p-4">
+                    <div class="text-4xl font-bold text-white mb-2 counter" data-target="15420">0</div>
+                    <div class="text-sm text-gray-400 uppercase tracking-wider">Игроков в системе</div>
+                </div>
+                <div class="p-4">
+                    <div class="text-4xl font-bold text-white mb-2 counter" data-target="3250">0</div>
+                    <div class="text-sm text-gray-400 uppercase tracking-wider">Фур на трассе</div>
+                </div>
+                <div class="p-4">
+                    <div class="text-4xl font-bold text-brand-money mb-2">$<span class="counter" data-target="850">0</span>K+</div>
+                    <div class="text-sm text-gray-400 uppercase tracking-wider">Выплачено игрокам</div>
+                </div>
+                <div class="p-4">
+                    <div class="text-4xl font-bold text-white mb-2 counter" data-target="24">0</div>
+                    <div class="text-sm text-gray-400 uppercase tracking-wider">Дня работы (Сезон 1)</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Механика игры -->
+    <section id="features" class="py-24 bg-brand-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Как это работает?</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">От рядового водителя до владельца Транспортной Компании. Каждое действие в игре имеет реальную экономическую ценность.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Шаг 1 -->
+                <div class="glass-panel p-8 rounded-2xl hover:border-brand-accent/50 transition duration-300">
+                    <div class="w-14 h-14 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6 border border-blue-500/30">
+                        <i class="fa-solid fa-truck text-2xl text-blue-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">1. Возьми первый груз</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Система выдаст тебе стартовую машину бесплатно. Бери заказы на бирже, следи за уровнем усталости водителя и доставляй груз вовремя.</p>
+                </div>
+
+                <!-- Шаг 2 -->
+                <div class="glass-panel p-8 rounded-2xl hover:border-brand-money/50 transition duration-300">
+                    <div class="w-14 h-14 bg-green-500/20 rounded-xl flex items-center justify-center mb-6 border border-green-500/30">
+                        <i class="fa-solid fa-money-bill-trend-up text-2xl text-green-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">2. Копи игровую валюту</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">За каждый рейс ты получаешь Баксы. Трать их на бензин, ремонт на СТО других игроков и покупку мощных тягачей.</p>
+                </div>
+
+                <!-- Шаг 3 -->
+                <div class="glass-panel p-8 rounded-2xl hover:border-brand-diamond/50 transition duration-300">
+                    <div class="w-14 h-14 bg-cyan-500/20 rounded-xl flex items-center justify-center mb-6 border border-cyan-500/30">
+                        <i class="fa-solid fa-gem text-2xl text-cyan-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">3. Добывай Бриллианты</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Выполняй сложные рейсы, находи Осколки или владей реальным бизнесом (АЗС/СТО), чтобы конвертировать прибыль в Бриллианты и выводить на свой кошелек.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Подвал -->
+    <footer class="bg-brand-dark pt-16 pb-8 border-t border-white/10 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center gap-3 mb-4">
+                        <i class="fa-solid fa-truck-fast text-brand-accent text-2xl"></i>
+                        <span class="font-bold text-xl tracking-tight">Logistics<span class="text-brand-accent">Syndicate</span></span>
+                    </div>
+                    <p class="text-gray-500 text-sm max-w-sm mb-6">
+                        Многопользовательская браузерная экономическая игра нового поколения. Построй бизнес, который работает на тебя.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-500 hover:text-brand-accent text-xl transition"><i class="fa-brands fa-telegram"></i></a>
+                        <a href="#" class="text-gray-500 hover:text-brand-accent text-xl transition"><i class="fa-brands fa-discord"></i></a>
+                        <a href="#" class="text-gray-500 hover:text-brand-accent text-xl transition"><i class="fa-brands fa-vk"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Информация</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-white transition">Новости проекта</a></li>
+                        <li><a href="#" class="hover:text-white transition">Таблица доходности</a></li>
+                        <li><a href="#" class="hover:text-white transition">Частые вопросы (FAQ)</a></li>
+                        <li><a href="#" class="hover:text-white transition">Служба поддержки</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Документация</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-white transition">Пользовательское соглашение</a></li>
+                        <li><a href="#" class="hover:text-white transition">Политика конфиденциальности</a></li>
+                        <li><a href="#" class="hover:text-white transition">Правила партнерской программы</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="pt-8 border-t border-white/10 text-center md:text-left flex flex-col md:flex-row justify-between items-center text-sm text-gray-600">
+                <p>&copy; 2026 Logistics Syndicate. Все права защищены.</p>
+                <div class="mt-4 md:mt-0 flex gap-4">
+                    <i class="fa-brands fa-cc-visa text-2xl opacity-50 hover:opacity-100 transition"></i>
+                    <i class="fa-brands fa-cc-mastercard text-2xl opacity-50 hover:opacity-100 transition"></i>
+                    <i class="fa-brands fa-bitcoin text-2xl opacity-50 hover:opacity-100 transition"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Скрипт для анимации цифр -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const counters = document.querySelectorAll('.counter');
+            const speed = 200; // Скорость анимации
+
+            const animateCounters = () => {
+                counters.forEach(counter => {
+                    const updateCount = () => {
+                        const target = +counter.getAttribute('data-target');
+                        const count = +counter.innerText.replace(/,/g, '');
+                        // Шаг приращения
+                        const inc = target / speed;
+
+                        if (count < target) {
+                            counter.innerText = Math.ceil(count + inc).toLocaleString('ru-RU');
+                            setTimeout(updateCount, 15);
+                        } else {
+                            counter.innerText = target.toLocaleString('ru-RU');
+                        }
+                    };
+                    updateCount();
+                });
+            };
+
+            // Запускаем анимацию когда блок статистики появляется на экране
+            const observer = new IntersectionObserver((entries) => {
+                if(entries[0].isIntersecting) {
+                    animateCounters();
+                    observer.disconnect();
+                }
+            }, { threshold: 0.5 });
+
+            observer.observe(document.querySelector('#stats'));
+
+            // Анимация прозрачности навбара при скролле
+            window.addEventListener('scroll', () => {
+                const nav = document.getElementById('navbar');
+                if (window.scrollY > 50) {
+                    nav.classList.add('bg-brand-dark/95', 'shadow-lg');
+                    nav.classList.remove('border-b-0');
+                } else {
+                    nav.classList.remove('bg-brand-dark/95', 'shadow-lg');
+                    nav.classList.add('border-b-0');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
