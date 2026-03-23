@@ -11,6 +11,9 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     
+    <!-- Supabase JS Library (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -48,6 +51,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
         }
+        .text-glow { text-shadow: 0 0 10px rgba(6, 182, 212, 0.5); }
         /* Кастомный скроллбар */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
@@ -57,21 +61,26 @@
 </head>
 <body class="antialiased flex h-screen overflow-hidden">
 
+    <!-- Загрузочный экран -->
+    <div id="loader" class="fixed inset-0 bg-brand-dark z-50 flex flex-col items-center justify-center transition-opacity duration-500">
+        <i class="fa-solid fa-circle-notch fa-spin text-5xl text-brand-accent mb-4"></i>
+        <p class="text-white font-medium animate-pulse mt-4">Загрузка профиля...</p>
+    </div>
+
     <!-- Боковая панель навигации (Sidebar) -->
     <aside class="w-64 glass-panel hidden md:flex flex-col border-r border-white/10 z-20">
         <!-- Логотип -->
-        <div class="h-20 flex items-center px-6 border-b border-white/10">
+        <div class="h-20 flex items-center px-6 border-b border-white/10 cursor-pointer" onclick="safeRedirect('index.html')">
             <i class="fa-solid fa-truck-fast text-brand-accent text-2xl mr-3"></i>
             <span class="font-bold text-lg tracking-tight">Logistics<span class="text-brand-accent">Syndicate</span></span>
         </div>
 
         <!-- Меню -->
         <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-2">
-            <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 bg-brand-accent/10 hover:text-white hover:bg-white/5 rounded-xl font-medium transition">
+            <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 bg-brand-accent/10 text-brand-accent rounded-xl font-semibold border border-brand-accent/20 transition">
                 <i class="fa-solid fa-warehouse w-5"></i> Гараж
             </a>
-            <!-- Активный пункт -->
-            <a href="job_board.html" class="flex items-center gap-3 px-4 py-3 text-gray-400 text-brand-accent rounded-xl font-semibold border border-brand-accent/20 transition">
+            <a href="job_board.html" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition">
                 <i class="fa-solid fa-map-location-dot w-5"></i> Биржа грузов
             </a>
             <a href="business_dashboard.html" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition">
@@ -87,20 +96,20 @@
             <a href="bank.html" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition">
                 <i class="fa-solid fa-building-columns w-5 text-brand-money"></i> Банк (Обмен)
             </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition">
-                <i class="fa-solid fa-chart-line w-5"></i> Рейтинги
-            </a>
+            <button onclick="handleLogout()" class="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl font-medium transition text-left mt-2">
+                <i class="fa-solid fa-arrow-right-from-bracket w-5"></i> Выйти
+            </button>
         </nav>
 
-        <!-- Профиль F2P-игрока -->
+        <!-- Профиль Игрока -->
         <div class="p-4 border-t border-white/10">
             <div class="flex items-center gap-3 px-2">
                 <div class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center border-2 border-gray-500 overflow-hidden">
                     <i class="fa-solid fa-user text-gray-400"></i>
                 </div>
                 <div>
-                    <div class="text-sm font-bold text-white">Игрок_7721</div>
-                    <div class="text-xs text-gray-400">Уровень 1 (Новичок)</div>
+                    <div id="profile-username" class="text-sm font-bold text-white">Загрузка...</div>
+                    <div id="profile-role" class="text-xs text-gray-400">Загрузка...</div>
                 </div>
             </div>
         </div>
@@ -122,27 +131,27 @@
             <div class="hidden sm:flex items-center gap-3 bg-brand-light/50 px-4 py-2 rounded-lg border border-white/5">
                 <i class="fa-solid fa-bolt text-brand-warning"></i>
                 <div class="w-32 h-2 bg-gray-700 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-yellow-500 to-brand-warning w-[100%]"></div>
+                    <div id="energy-bar" class="h-full bg-gradient-to-r from-yellow-500 to-brand-warning w-[0%] transition-all duration-500"></div>
                 </div>
-                <span class="text-sm font-bold text-white">100/100</span>
+                <span id="energy-text" class="text-sm font-bold text-white">0/100</span>
             </div>
 
             <!-- Балансы валют -->
             <div class="flex items-center gap-2 sm:gap-4">
-                <!-- Баксы (Игровая валюта) -->
+                <!-- Баксы -->
                 <div class="flex items-center gap-2 bg-green-900/30 border border-green-500/30 px-3 py-1.5 rounded-lg cursor-pointer hover:bg-green-900/50 transition">
                     <i class="fa-solid fa-money-bill-wave text-brand-money"></i>
-                    <span class="font-bold text-brand-money">15 400</span>
+                    <span id="balance-bucks" class="font-bold text-brand-money">0</span>
                 </div>
-                <!-- Осколки Бриллиантов -->
+                <!-- Осколки -->
                 <div class="hidden sm:flex items-center gap-2 bg-cyan-900/30 border border-cyan-500/30 px-3 py-1.5 rounded-lg" title="Собери 1000 чтобы получить 1 Бриллиант">
                     <i class="fa-solid fa-gem text-brand-diamond opacity-70 text-sm"></i>
-                    <span class="font-bold text-cyan-200 text-sm">45 <span class="text-gray-500 text-xs">/1000</span></span>
+                    <span class="font-bold text-cyan-200 text-sm"><span id="balance-shards">0</span> <span class="text-gray-500 text-xs">/1000</span></span>
                 </div>
-                <!-- Бриллианты (Донат/Вывод) -->
+                <!-- Бриллианты -->
                 <div class="flex items-center gap-2 bg-cyan-900/40 border border-brand-diamond px-3 py-1.5 rounded-lg cursor-pointer hover:bg-cyan-900/60 transition shadow-[0_0_10px_rgba(6,182,212,0.3)]">
                     <i class="fa-solid fa-gem text-brand-diamond text-glow"></i>
-                    <span class="font-bold text-white">0.00</span>
+                    <span id="balance-diamonds" class="font-bold text-white text-glow">0.00</span>
                     <button class="ml-1 text-gray-400 hover:text-white"><i class="fa-solid fa-plus-circle"></i></button>
                 </div>
             </div>
@@ -162,26 +171,20 @@
 
             <!-- Основной блок грузовика -->
             <div class="grid lg:grid-cols-3 gap-6">
-                <!-- Визуал грузовика (Занимает 2 колонки) -->
+                <!-- Визуал грузовика -->
                 <div class="lg:col-span-2 glass-card rounded-2xl overflow-hidden relative flex flex-col">
-                    <!-- Бейдж класса -->
                     <div class="absolute top-4 left-4 bg-gray-800/80 backdrop-blur border border-gray-600 text-gray-300 text-xs font-bold px-3 py-1 rounded-full z-10 flex items-center gap-2">
                         <i class="fa-solid fa-star text-gray-500"></i> Стартовый класс (F2P)
                     </div>
 
-                    <!-- Изображение -->
                     <div class="h-64 sm:h-80 bg-gray-900 relative flex items-center justify-center border-b border-white/10">
-                        <!-- Плейсхолдер для машины (Требование системы) -->
                         <div class="text-center">
                             <i class="fa-solid fa-truck-pickup text-6xl text-gray-600 mb-4 block"></i>
                             <span class="text-gray-500 border border-gray-700 px-4 py-2 rounded bg-gray-800/50"></span>
                         </div>
-                        
-                        <!-- Декоративные тени снизу -->
                         <div class="absolute bottom-0 w-full h-1/2 bg-gradient-to-t from-brand-dark to-transparent"></div>
                     </div>
 
-                    <!-- Информация снизу -->
                     <div class="p-6 flex-1 flex flex-col justify-between">
                         <div class="flex justify-between items-start mb-6">
                             <div>
@@ -194,7 +197,7 @@
                             </div>
                         </div>
 
-                        <!-- Состояние машины (Критичные параметры экономики) -->
+                        <!-- Состояние машины -->
                         <div class="grid grid-cols-2 gap-4">
                             <!-- Топливо -->
                             <div class="bg-black/30 p-4 rounded-xl border border-white/5">
@@ -206,11 +209,11 @@
                                     <div class="h-full bg-brand-accent w-[45%]"></div>
                                 </div>
                                 <button class="w-full text-xs bg-white/5 hover:bg-white/10 text-white py-2 rounded transition border border-white/10">
-                                    Заправить (АЗС игроков)
+                                    Заправить
                                 </button>
                             </div>
 
-                            <!-- Прочность (Износ) -->
+                            <!-- Прочность -->
                             <div class="bg-black/30 p-4 rounded-xl border border-white/5">
                                 <div class="flex justify-between text-sm mb-2">
                                     <span class="text-gray-400"><i class="fa-solid fa-wrench mr-1"></i> Состояние</span>
@@ -220,16 +223,15 @@
                                     <div class="h-full bg-brand-warning w-[72%]"></div>
                                 </div>
                                 <button class="w-full text-xs bg-white/5 hover:bg-white/10 text-white py-2 rounded transition border border-white/10">
-                                    Ремонт (СТО игроков)
+                                    Ремонт
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Боковая панель действий и статистики -->
+                <!-- Боковая панель -->
                 <div class="flex flex-col gap-6">
-                    <!-- Основное действие -->
                     <div class="glass-card rounded-2xl p-6 text-center">
                         <div class="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-500/30 shadow-[0_0_20px_rgba(59,130,246,0.2)]">
                             <i class="fa-solid fa-map-location-dot text-3xl text-brand-accent"></i>
@@ -237,12 +239,11 @@
                         <h3 class="text-lg font-bold text-white mb-2">Машина готова</h3>
                         <p class="text-sm text-gray-400 mb-6">Топлива хватит на маршрут средней дальности (до 400 км).</p>
                         
-                        <button class="w-full bg-gradient-to-r from-brand-accent to-blue-600 hover:from-blue-500 hover:to-blue-400 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/25 transition transform hover:-translate-y-1">
+                        <button onclick="safeRedirect('job_board.html')" class="w-full bg-gradient-to-r from-brand-accent to-blue-600 hover:from-blue-500 hover:to-blue-400 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/25 transition transform hover:-translate-y-1">
                             Найти груз
                         </button>
                     </div>
 
-                    <!-- Характеристики машины -->
                     <div class="glass-card rounded-2xl p-6 flex-1">
                         <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Характеристики</h3>
                         <ul class="space-y-4">
@@ -251,55 +252,137 @@
                                 <span class="font-bold text-white">1.5 тонны</span>
                             </li>
                             <li class="flex justify-between items-center border-b border-white/5 pb-2">
-                                <span class="text-gray-300"><i class="fa-solid fa-gauge-high w-5 text-gray-500"></i> Базовая скорость</span>
+                                <span class="text-gray-300"><i class="fa-solid fa-gauge-high w-5 text-gray-500"></i> Скорость</span>
                                 <span class="font-bold text-white">80 км/ч</span>
                             </li>
                             <li class="flex justify-between items-center border-b border-white/5 pb-2">
                                 <span class="text-gray-300"><i class="fa-solid fa-percent w-5 text-gray-500"></i> Шанс Осколка</span>
                                 <span class="font-bold text-cyan-400">1%</span>
                             </li>
-                            <li class="flex justify-between items-center border-b border-white/5 pb-2">
-                                <span class="text-gray-300"><i class="fa-solid fa-shield text-brand-money w-5"></i> Страховка</span>
-                                <span class="font-bold text-brand-money text-xs bg-green-900/40 px-2 py-1 rounded">Активна (3 дня)</span>
-                            </li>
                         </ul>
                     </div>
                 </div>
             </div>
-
-            <!-- История логов -->
-            <div class="mt-8">
-                <h3 class="text-lg font-bold text-white mb-4">Последние события</h3>
-                <div class="glass-panel rounded-xl overflow-hidden">
-                    <div class="flex items-center justify-between p-4 border-b border-white/5 hover:bg-white/5 transition">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center text-green-400">
-                                <i class="fa-solid fa-check"></i>
-                            </div>
-                            <div>
-                                <div class="text-sm font-bold text-white">Успешный рейс: Москва - Тула</div>
-                                <div class="text-xs text-gray-500">Сегодня в 14:30</div>
-                            </div>
-                        </div>
-                        <div class="font-bold text-brand-money">+ 900 Баксов</div>
-                    </div>
-                    <div class="flex items-center justify-between p-4 hover:bg-white/5 transition">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-red-400">
-                                <i class="fa-solid fa-gas-pump"></i>
-                            </div>
-                            <div>
-                                <div class="text-sm font-bold text-white">Заправка топливом (АЗС "Форсаж")</div>
-                                <div class="text-xs text-gray-500">Сегодня в 10:15</div>
-                            </div>
-                        </div>
-                        <div class="font-bold text-red-400">- 300 Баксов</div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </main>
 
+    <script>
+        // ==========================================
+        // ИНТЕГРАЦИЯ SUPABASE И ЛОГИКА КАБИНЕТА
+        // ==========================================
+        const SUPABASE_URL = 'https://xjjnkyhdmqwnkhhljuxp.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhqam5reWhkbXF3bmtoaGxqdXhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyMTM1OTYsImV4cCI6MjA4OTc4OTU5Nn0.OgsDkQId5hcPBM3bqFOm-u9Vj0mU0RkGar8GooKRmUc';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Функция форматирования чисел (10000 -> 10 000)
+        function formatNumber(num) {
+            return new Intl.NumberFormat('ru-RU').format(num);
+        }
+
+        // Безопасный редирект для изолированного iframe (Canvas)
+        function safeRedirect(url) {
+            try {
+                window.location.href = url;
+            } catch (e) {
+                console.warn('Редирект заблокирован окружением:', e);
+            }
+        }
+
+        async function initDashboard() {
+            try {
+                // 1. Проверяем авторизацию пользователя
+                const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+                
+                if (sessionError || !session) {
+                    console.log('Нет активной сессии, перенаправление на страницу входа...');
+                    try {
+                        window.location.href = 'auth.html';
+                    } catch (e) {
+                        console.warn('Окружение заблокировало редирект. Отображаем заглушку.');
+                        const loader = document.getElementById('loader');
+                        loader.innerHTML = `
+                            <div class="text-center z-50">
+                                <i class="fa-solid fa-lock text-6xl text-brand-danger mb-6"></i>
+                                <h2 class="text-3xl font-bold text-white mb-3">Доступ закрыт</h2>
+                                <p class="text-gray-400 text-lg mb-6">Для доступа к гаражу необходимо авторизоваться.</p>
+                                <a href="auth.html" target="_top" class="inline-block bg-brand-accent hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-bold shadow-lg transition transform hover:-translate-y-0.5">
+                                    Войти в аккаунт
+                                </a>
+                            </div>
+                        `;
+                        loader.classList.remove('bg-brand-dark');
+                        loader.classList.add('bg-brand-dark/95', 'backdrop-blur-sm');
+                    }
+                    return;
+                }
+
+                const userId = session.user.id;
+
+                // 2. Получаем данные профиля из таблицы profiles (по RLS правилу)
+                const { data: profile, error: profileError } = await supabaseClient
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', userId)
+                    .single();
+
+                if (profileError) {
+                    console.error('Ошибка получения профиля:', profileError);
+                    alert('Не удалось загрузить данные профиля.');
+                    return;
+                }
+
+                // 3. Обновляем интерфейс реальными данными
+                
+                // Имя и роль
+                document.getElementById('profile-username').innerText = profile.username;
+                document.getElementById('profile-role').innerText = `Уровень: ${profile.role}`;
+
+                // Балансы валют
+                document.getElementById('balance-bucks').innerText = formatNumber(profile.balance_bucks);
+                document.getElementById('balance-shards').innerText = formatNumber(profile.shards);
+                
+                // Бриллианты форматируем с 2 знаками после запятой
+                const diamonds = parseFloat(profile.balance_diamonds).toFixed(2);
+                document.getElementById('balance-diamonds').innerText = diamonds;
+
+                // Энергия
+                const energy = profile.energy || 0;
+                document.getElementById('energy-text').innerText = `${energy}/100`;
+                
+                const energyBar = document.getElementById('energy-bar');
+                energyBar.style.width = `${energy}%`;
+                
+                // Меняем цвет полоски энергии в зависимости от уровня
+                if (energy < 20) {
+                    energyBar.classList.remove('from-yellow-500', 'to-brand-warning');
+                    energyBar.classList.add('bg-brand-danger');
+                }
+
+                // 4. Скрываем экран загрузки
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loader').classList.add('hidden');
+                }, 500);
+
+            } catch (err) {
+                console.error('Критическая ошибка инициализации:', err);
+            }
+        }
+
+        // Выход из аккаунта
+        async function handleLogout() {
+            if(confirm('Вы уверены, что хотите выйти из аккаунта?')) {
+                await supabaseClient.auth.signOut();
+                try {
+                    window.location.href = 'index.html';
+                } catch(e) {
+                    window.location.reload();
+                }
+            }
+        }
+
+        // Запускаем инициализацию при загрузке страницы
+        window.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
 </body>
 </html>
